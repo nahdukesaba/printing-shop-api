@@ -12,6 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Configure Git Safe Directory
+        shell: cmd
+        run: git config --global --add safe.directory "*"
+
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -22,7 +26,8 @@ jobs:
         run: go mod tidy
 
       - name: Build
-        run: go build -o app.exe ./cmd/api
+        shell: cmd
+        run: go build -buildvcs=false -o app.exe ./cmd/api
 
       - name: Stop service
         continue-on-error: true
