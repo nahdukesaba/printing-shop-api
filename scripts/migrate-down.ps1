@@ -1,0 +1,1 @@
+goose -dir migrations postgres $env:MIGRATION_DATABASE_URL down
