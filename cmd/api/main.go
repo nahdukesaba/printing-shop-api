@@ -35,7 +35,7 @@ func main() {
 	api := app.Group("/api")
 
 	api.Get("/health", func(c *fiber.Ctx) error {
-		return utils.Success(c, "API is running", nil)
+		return utils.Success(c, "API is running. DUH!!", nil)
 	})
 
 	protected := api.Group("/protected", middleware.Protected(cfg.SupabaseJWTSecret))
