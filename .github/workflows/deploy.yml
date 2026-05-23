@@ -35,7 +35,7 @@ jobs:
         run: net stop PrintingShopAPI
 
       - name: Wait for service shutdown
-        shell: cmd
+        shell: powershell
         run: timeout /t 3
 
       - name: Copy binary
