@@ -18,9 +18,11 @@ jobs:
           go-version: '1.24'
 
       - name: Install dependencies
+        shell: cmd
         run: go mod tidy
 
       - name: Build
+        shell: cmd
         run: go build -o app.exe ./cmd/api
 
       - name: Stop service
