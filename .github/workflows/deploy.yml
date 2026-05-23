@@ -34,10 +34,6 @@ jobs:
         shell: cmd
         run: net stop PrintingShopAPI
 
-      - name: Wait for service shutdown
-        shell: powershell
-        run: timeout /t 3
-
       - name: Copy binary
         shell: cmd
         run: copy /Y app.exe D:\Tools\Apps\printing-shop\app.exe
