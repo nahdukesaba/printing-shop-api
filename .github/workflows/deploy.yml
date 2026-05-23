@@ -22,14 +22,16 @@ jobs:
         run: go mod tidy
 
       - name: Build
-        shell: cmd
         run: go build -o app.exe ./cmd/api
 
       - name: Stop service
+        continue-on-error: true
+        shell: cmd
         run: net stop PrintingShopAPI
 
       - name: Copy binary
         run: copy app.exe D:\CodeBase\printing-shop-api\app.exe
 
       - name: Start service
+        shell: cmd
         run: net start PrintingShopAPI
