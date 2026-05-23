@@ -57,7 +57,7 @@ func main() {
 	categories.Post("/", categoryHandler.CreateCategory)
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "https://yourfrontend.com",
+		AllowOrigins: "https://tet.vercel.app",
 		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 	}))
 
