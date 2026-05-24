@@ -24,8 +24,8 @@ INSERT INTO print_requests (
     delivery_type,
     due_date,
     status,
-    file_url,
-    payment_proof_url,
+    file_path,
+    payment_proof_path,
     invoice_number,
     total_price
 )
@@ -46,7 +46,7 @@ VALUES (
            $14,
            $15
        )
-    RETURNING id, user_id, service_variant_id, customer_name, phone, notes, copies, paper_size, color_mode, delivery_type, due_date, status, file_url, payment_proof_url, invoice_number, total_price, created_at, updated_at
+    RETURNING id, user_id, service_variant_id, customer_name, phone, notes, copies, paper_size, color_mode, delivery_type, due_date, status, file_path, payment_proof_path, invoice_number, total_price, created_at, updated_at
 `
 
 type CreatePrintRequestParams struct {
@@ -61,8 +61,8 @@ type CreatePrintRequestParams struct {
 	DeliveryType     string
 	DueDate          pgtype.Timestamp
 	Status           string
-	FileUrl          string
-	PaymentProofUrl  string
+	FilePath         string
+	PaymentProofPath string
 	InvoiceNumber    string
 	TotalPrice       int64
 }
@@ -80,8 +80,8 @@ func (q *Queries) CreatePrintRequest(ctx context.Context, arg CreatePrintRequest
 		arg.DeliveryType,
 		arg.DueDate,
 		arg.Status,
-		arg.FileUrl,
-		arg.PaymentProofUrl,
+		arg.FilePath,
+		arg.PaymentProofPath,
 		arg.InvoiceNumber,
 		arg.TotalPrice,
 	)
@@ -99,8 +99,8 @@ func (q *Queries) CreatePrintRequest(ctx context.Context, arg CreatePrintRequest
 		&i.DeliveryType,
 		&i.DueDate,
 		&i.Status,
-		&i.FileUrl,
-		&i.PaymentProofUrl,
+		&i.FilePath,
+		&i.PaymentProofPath,
 		&i.InvoiceNumber,
 		&i.TotalPrice,
 		&i.CreatedAt,
@@ -110,7 +110,7 @@ func (q *Queries) CreatePrintRequest(ctx context.Context, arg CreatePrintRequest
 }
 
 const getPrintRequests = `-- name: GetPrintRequests :many
-SELECT id, user_id, service_variant_id, customer_name, phone, notes, copies, paper_size, color_mode, delivery_type, due_date, status, file_url, payment_proof_url, invoice_number, total_price, created_at, updated_at FROM print_requests
+SELECT id, user_id, service_variant_id, customer_name, phone, notes, copies, paper_size, color_mode, delivery_type, due_date, status, file_path, payment_proof_path, invoice_number, total_price, created_at, updated_at FROM print_requests
 ORDER BY created_at DESC
 `
 
@@ -136,8 +136,8 @@ func (q *Queries) GetPrintRequests(ctx context.Context) ([]PrintRequest, error) 
 			&i.DeliveryType,
 			&i.DueDate,
 			&i.Status,
-			&i.FileUrl,
-			&i.PaymentProofUrl,
+			&i.FilePath,
+			&i.PaymentProofPath,
 			&i.InvoiceNumber,
 			&i.TotalPrice,
 			&i.CreatedAt,
@@ -154,7 +154,7 @@ func (q *Queries) GetPrintRequests(ctx context.Context) ([]PrintRequest, error) 
 }
 
 const getPrintRequestsByUser = `-- name: GetPrintRequestsByUser :many
-SELECT id, user_id, service_variant_id, customer_name, phone, notes, copies, paper_size, color_mode, delivery_type, due_date, status, file_url, payment_proof_url, invoice_number, total_price, created_at, updated_at FROM print_requests
+SELECT id, user_id, service_variant_id, customer_name, phone, notes, copies, paper_size, color_mode, delivery_type, due_date, status, file_path, payment_proof_path, invoice_number, total_price, created_at, updated_at FROM print_requests
 WHERE user_id = $1
 ORDER BY created_at DESC
 `
@@ -181,8 +181,8 @@ func (q *Queries) GetPrintRequestsByUser(ctx context.Context, userID pgtype.UUID
 			&i.DeliveryType,
 			&i.DueDate,
 			&i.Status,
-			&i.FileUrl,
-			&i.PaymentProofUrl,
+			&i.FilePath,
+			&i.PaymentProofPath,
 			&i.InvoiceNumber,
 			&i.TotalPrice,
 			&i.CreatedAt,
@@ -203,7 +203,7 @@ UPDATE print_requests
 SET status = $2,
     updated_at = NOW()
 WHERE id = $1
-    RETURNING id, user_id, service_variant_id, customer_name, phone, notes, copies, paper_size, color_mode, delivery_type, due_date, status, file_url, payment_proof_url, invoice_number, total_price, created_at, updated_at
+    RETURNING id, user_id, service_variant_id, customer_name, phone, notes, copies, paper_size, color_mode, delivery_type, due_date, status, file_path, payment_proof_path, invoice_number, total_price, created_at, updated_at
 `
 
 type UpdatePrintRequestStatusParams struct {
@@ -227,8 +227,8 @@ func (q *Queries) UpdatePrintRequestStatus(ctx context.Context, arg UpdatePrintR
 		&i.DeliveryType,
 		&i.DueDate,
 		&i.Status,
-		&i.FileUrl,
-		&i.PaymentProofUrl,
+		&i.FilePath,
+		&i.PaymentProofPath,
 		&i.InvoiceNumber,
 		&i.TotalPrice,
 		&i.CreatedAt,

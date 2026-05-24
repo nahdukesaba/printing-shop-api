@@ -28,8 +28,8 @@ type PrintRequest struct {
 	DeliveryType     string
 	DueDate          pgtype.Timestamp
 	Status           string
-	FileUrl          string
-	PaymentProofUrl  string
+	FilePath         string
+	PaymentProofPath string
 	InvoiceNumber    string
 	TotalPrice       int64
 	CreatedAt        pgtype.Timestamp
@@ -64,6 +64,7 @@ type ServiceVariant struct {
 	PaperSize string
 	ColorMode string
 	Price     int64
+	Notes     string
 	Active    pgtype.Bool
 	CreatedAt pgtype.Timestamp
 }

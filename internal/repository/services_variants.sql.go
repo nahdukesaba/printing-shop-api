@@ -17,16 +17,18 @@ INSERT INTO service_variants (
     name,
     paper_size,
     color_mode,
-    price
+    price,
+    notes
 )
 VALUES (
            $1,
            $2,
            $3,
            $4,
-           $5
+           $5,
+           $6
        )
-    RETURNING id, service_id, name, paper_size, color_mode, price, active, created_at
+    RETURNING id, service_id, name, paper_size, color_mode, price, notes, active, created_at
 `
 
 type CreateServiceVariantParams struct {
@@ -35,6 +37,7 @@ type CreateServiceVariantParams struct {
 	PaperSize string
 	ColorMode string
 	Price     int64
+	Notes     string
 }
 
 func (q *Queries) CreateServiceVariant(ctx context.Context, arg CreateServiceVariantParams) (ServiceVariant, error) {
@@ -44,6 +47,7 @@ func (q *Queries) CreateServiceVariant(ctx context.Context, arg CreateServiceVar
 		arg.PaperSize,
 		arg.ColorMode,
 		arg.Price,
+		arg.Notes,
 	)
 	var i ServiceVariant
 	err := row.Scan(
@@ -53,14 +57,60 @@ func (q *Queries) CreateServiceVariant(ctx context.Context, arg CreateServiceVar
 		&i.PaperSize,
 		&i.ColorMode,
 		&i.Price,
+		&i.Notes,
 		&i.Active,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
+const deleteVariantsById = `-- name: DeleteVariantsById :exec
+DELETE FROM service_variants
+WHERE id = $1
+`
+
+func (q *Queries) DeleteVariantsById(ctx context.Context, id pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, deleteVariantsById, id)
+	return err
+}
+
+const getAllVariants = `-- name: GetAllVariants :many
+SELECT id, service_id, name, paper_size, color_mode, price, notes, active, created_at FROM service_variants
+ORDER BY created_at DESC
+`
+
+func (q *Queries) GetAllVariants(ctx context.Context) ([]ServiceVariant, error) {
+	rows, err := q.db.Query(ctx, getAllVariants)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ServiceVariant
+	for rows.Next() {
+		var i ServiceVariant
+		if err := rows.Scan(
+			&i.ID,
+			&i.ServiceID,
+			&i.Name,
+			&i.PaperSize,
+			&i.ColorMode,
+			&i.Price,
+			&i.Notes,
+			&i.Active,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getVariantsByService = `-- name: GetVariantsByService :many
-SELECT id, service_id, name, paper_size, color_mode, price, active, created_at FROM service_variants
+SELECT id, service_id, name, paper_size, color_mode, price, notes, active, created_at FROM service_variants
 WHERE service_id = $1
 ORDER BY created_at DESC
 `
@@ -81,6 +131,7 @@ func (q *Queries) GetVariantsByService(ctx context.Context, serviceID pgtype.UUI
 			&i.PaperSize,
 			&i.ColorMode,
 			&i.Price,
+			&i.Notes,
 			&i.Active,
 			&i.CreatedAt,
 		); err != nil {
@@ -92,4 +143,48 @@ func (q *Queries) GetVariantsByService(ctx context.Context, serviceID pgtype.UUI
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateVariantsById = `-- name: UpdateVariantsById :one
+UPDATE service_variants SET
+name=$2, paper_size=$3, color_mode=$4,
+price=$5, notes=$6, active=$7, service_id=$8
+WHERE id=$1 RETURNING id, service_id, name, paper_size, color_mode, price, notes, active, created_at
+`
+
+type UpdateVariantsByIdParams struct {
+	ID        pgtype.UUID
+	Name      string
+	PaperSize string
+	ColorMode string
+	Price     int64
+	Notes     string
+	Active    pgtype.Bool
+	ServiceID pgtype.UUID
+}
+
+func (q *Queries) UpdateVariantsById(ctx context.Context, arg UpdateVariantsByIdParams) (ServiceVariant, error) {
+	row := q.db.QueryRow(ctx, updateVariantsById,
+		arg.ID,
+		arg.Name,
+		arg.PaperSize,
+		arg.ColorMode,
+		arg.Price,
+		arg.Notes,
+		arg.Active,
+		arg.ServiceID,
+	)
+	var i ServiceVariant
+	err := row.Scan(
+		&i.ID,
+		&i.ServiceID,
+		&i.Name,
+		&i.PaperSize,
+		&i.ColorMode,
+		&i.Price,
+		&i.Notes,
+		&i.Active,
+		&i.CreatedAt,
+	)
+	return i, err
 }

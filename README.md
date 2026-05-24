@@ -260,7 +260,13 @@ sqlc generate
 
 ---
 
-# 12. Run Backend Locally
+# 12. Seed The Database
+
+```powershell
+.\scripts\seed.ps1
+```
+
+# 13. Run Backend Locally
 
 ```powershell
 go run ./cmd/api
@@ -652,6 +658,67 @@ sqlc generate
 ```
 
 ---
+
+## Database Seeding
+
+This project uses SQL seed files to populate initial data such as:
+
+- categories
+- layanan/services
+- pricing
+- FAQ
+- testimonials
+- homepage content 
+
+## Recommended Seed Structure
+
+Create:
+
+```
+seeds/
+```
+Example:
+
+```seeds/
+001_categories.sql
+002_layanan.sql
+003_prices.sql
+004_faq.sql
+```
+
+### IMPORTANT
+Seeds should:
+
+- be idempotent
+- safe to rerun
+
+Use:
+
+```ON CONFLICT DO NOTHING```
+
+whenever possible.
+
+Example:
+
+```
+INSERT INTO categories (name)
+VALUES
+('Dokumen'),
+('Banner'),
+('Foto')
+ON CONFLICT DO NOTHING;
+```
+
+Run Seeds Manually
+
+```PowerShell:
+Get-ChildItem .\seeds\*.sql | ForEach-Object {
+psql $env:DATABASE_URL -f $_.FullName
+}
+```
+
+This executes all seed files sequentially.
+
 
 # Current API Plan
 

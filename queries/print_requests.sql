@@ -11,8 +11,8 @@ INSERT INTO print_requests (
     delivery_type,
     due_date,
     status,
-    file_url,
-    payment_proof_url,
+    file_path,
+    payment_proof_path,
     invoice_number,
     total_price
 )
