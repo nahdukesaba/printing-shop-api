@@ -1,5 +1,7 @@
 INSERT INTO categories (name, slug)
 VALUES
-    ('Photocopy', 'photocopy'),
-    ('Banner', 'banner'),
-    ('Sticker', 'sticker');
+    ('Percetakan', 'percetakan'),
+    ('Service', 'service'),
+    ('Warnet', 'warnet'),
+    ('Desain', 'desain'),
+    ('Scan', 'scan');
