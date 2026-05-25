@@ -56,6 +56,12 @@ func main() {
 	categories.Get("/", categoryHandler.GetCategories)
 	categories.Post("/", categoryHandler.CreateCategory)
 
+	serviceService := service.NewServiceService(queries)
+	serviceHandler := handler.NewServiceHandler(serviceService)
+	services := api.Group("/services")
+
+	services.Get("/", serviceHandler.GetServices)
+
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "https://tet.vercel.app",
 		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
